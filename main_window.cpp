@@ -1,0 +1,48 @@
+﻿#include "main_window.h"
+#include "fractal_pass.h"
+#include "framebuffer.h"
+
+MainWindow::MainWindow() : Window("frac3k1", 640,640)
+{
+}
+bool mouse_down = false;
+int last_mouse_x, last_mouse_y;
+float last_center_x, last_center_y;
+void MainWindow::on_mouse_down(int button)
+{
+	mouse_down = true;
+	last_center_x = m_fractal_pass->center_x;
+	last_center_y = m_fractal_pass->center_y;
+}
+void MainWindow::on_mouse_up(int button)
+{
+	mouse_down = false;
+}
+void MainWindow::on_mouse_move(int x, int y)
+{
+	if(!mouse_down){
+		last_mouse_x = x;
+		last_mouse_y = y;
+	}else{
+		float zoom = m_fractal_pass->zoom;
+		m_fractal_pass->center_x= last_center_x + ((last_mouse_x-x)/static_cast<float>(m_width))*zoom;
+		m_fractal_pass->center_y= last_center_y + ((y-last_mouse_y)/static_cast<float>(m_height))*zoom;
+		invalidate();
+	}
+}
+void MainWindow::on_mouse_wheel(int wheel)
+{
+	m_fractal_pass->zoom *= 1 + 0.1 * -wheel;
+	invalidate();
+}
+
+void MainWindow::redraw()const
+{
+	m_fractal_pass->use();
+	m_fractal_pass->render();
+}
+
+void MainWindow::init(){
+	m_fractal_pass = std::make_unique<FractalPass>();
+	//m_framebuffer = std::make_unique<Framebuffer>(640,640);
+}
