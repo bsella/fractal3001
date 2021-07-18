@@ -20,6 +20,8 @@ public:
 private:
 	static std::unique_ptr<Shader> singleton_vertex_shader;
 	static unsigned int count;
+	static GLuint vao;
+	static GLuint vbo;
 };
 
 #endif // FRAMEBUFFERPASS_H

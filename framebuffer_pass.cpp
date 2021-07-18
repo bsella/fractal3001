@@ -9,12 +9,6 @@ const GLfloat quad[]=
 	 1.f, 1.f
 };
 
-const unsigned int quad_indices[]=
-{
-	0,1,2,
-	2,1,3
-};
-
 const char vertex_shader_code[]=
 	"#version 330\n\
 	uniform sampler2D fbo_texture;\n\
@@ -28,9 +22,8 @@ const char vertex_shader_code[]=
 unsigned int FramebufferPass::count = 0;
 std::unique_ptr<Shader> FramebufferPass::singleton_vertex_shader;
 
-static GLuint vao;
-static GLuint vbo;
-static GLuint ebo;
+GLuint FramebufferPass::vao;
+GLuint FramebufferPass::vbo;
 
 FramebufferPass::FramebufferPass() : RenderPass()
 {
@@ -43,16 +36,12 @@ FramebufferPass::FramebufferPass() : RenderPass()
 		// init buffers
 		glGenVertexArrays(1, &vao);
 		glGenBuffers(1, &vbo);
-		glGenBuffers(1, &ebo);
 
 		glBindVertexArray(vao);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(quad), quad, GL_STATIC_DRAW);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (GLvoid*)0);
 		glEnableVertexAttribArray(0);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_indices), quad_indices, GL_STATIC_DRAW);
 	}
 	glAttachShader(id(), singleton_vertex_shader->id());
 	count++;
@@ -65,7 +54,6 @@ FramebufferPass::~FramebufferPass()
 	if(count == 0)
 	{
 		// free buffers
-		glDeleteBuffers(1, &ebo);
 		glDeleteBuffers(1, &vbo);
 		glDeleteVertexArrays(1, &vao);
 
@@ -77,7 +65,7 @@ FramebufferPass::~FramebufferPass()
 void FramebufferPass::render()const
 {
 	glBindVertexArray(vao);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
 void FramebufferPass::draw_on(Framebuffer& fb) const
