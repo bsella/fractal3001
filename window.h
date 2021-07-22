@@ -37,7 +37,7 @@ private:
 	bool m_alive;
 	bool m_valid;
 	std::condition_variable m_cv;
-	std::thread m_updating_thread;
+	std::thread m_graphics_thread;
 	std::mutex  m_validation_mutex;
 
 	bool make_current()const;

@@ -1,12 +1,13 @@
-﻿#include "fractal_pass.h"
-#include "shader.h"
+﻿#include "math_pass.h"
+#include "../shader.h"
 
 const char fragment_shader_code[]=
 "#version 330\n\
 uniform float zoom;\n\
 uniform float center_x;\n\
 uniform float center_y;\n\
-out vec4 fragColor;\n\
+layout (location = 0) out vec2 last_z;\n\
+layout (location = 1) out uint iteration_count;\n\
 in vec2 texCoord;\n\
 \n\
 const float bailout = 300;\n\
@@ -58,17 +59,16 @@ void main(){\n\
 	z.a = x;\n\
 	z.b = y;\n\
 	complex c = z;\n\
-	for(int i =0 ; i < 100; i++){\n\
+	for(iteration_count =0u ; iteration_count < 200u; iteration_count++){\n\
 		if(mag2(z)>bailout){\n\
-			fragColor = vec4(arg_norm(z), mag_norm(z), i/bailout ,1);\n\
-			return;\n\
+			break;\n\
 		}\n\
 		z = add(mul(z,z),c);\n\
 	}\n\
-	fragColor = vec4(0,0,0,1);\n\
+	last_z = vec2(z.a,z.b);\n\
 }\n";
 
-FractalPass::FractalPass() : FramebufferPass()
+FractalMathPass::FractalMathPass() : FullscreenPass()
 {
 	Shader fragment_shader(GL_FRAGMENT_SHADER);
 	if(fragment_shader.compile(fragment_shader_code)){
@@ -81,10 +81,10 @@ FractalPass::FractalPass() : FramebufferPass()
 	}
 }
 
-void FractalPass::render()const
+void FractalMathPass::render()const
 {
 	glUniform1f(m_zoom_location, zoom);
 	glUniform1f(m_x_location, center_x);
 	glUniform1f(m_y_location, center_y);
-	FramebufferPass::render();
+	FullscreenPass::render();
 }

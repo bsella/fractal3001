@@ -4,8 +4,9 @@
 #include "window.h"
 #include <memory>
 
-class FractalPass;
-class Framebuffer;
+class GBuffer;
+class FractalMathPass;
+class FractalColorPass;
 
 class MainWindow : public Window
 {
@@ -21,8 +22,9 @@ public:
 	void init() override;
 
 private:
-	std::unique_ptr<FractalPass> m_fractal_pass;
-	std::unique_ptr<Framebuffer> m_framebuffer;
+	std::unique_ptr<GBuffer> m_gbuffer;
+	std::unique_ptr<FractalMathPass> m_fractal_math_pass;
+	std::unique_ptr<FractalColorPass> m_fractal_color_pass;
 };
 
 #endif // MAINWINDOW_H

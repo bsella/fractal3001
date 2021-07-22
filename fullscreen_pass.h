@@ -6,16 +6,14 @@
 
 #include <memory>
 class Shader;
-class Framebuffer;
 
-class FramebufferPass : public RenderPass
+class FullscreenPass : public RenderPass
 {
 public:
-	FramebufferPass();
-	virtual ~FramebufferPass();
+	FullscreenPass();
+	virtual ~FullscreenPass();
 
 	void render()const override;
-	void draw_on(Framebuffer&)const;
 
 private:
 	static std::unique_ptr<Shader> singleton_vertex_shader;

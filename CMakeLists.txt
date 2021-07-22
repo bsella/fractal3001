@@ -15,7 +15,8 @@ add_executable(frac3k1
 	main_window.cpp
 	shader.cpp
 	render_pass.cpp
-	framebuffer.cpp
-	framebuffer_pass.cpp
-	fractal_pass.cpp)
+	fullscreen_pass.cpp
+	fractal/gbuffer.cpp
+	fractal/math_pass.cpp
+	fractal/color_pass.cpp)
 target_link_libraries(frac3k1 ${SDL2_LIBRARIES} ${GLEW_LIBRARIES} -lOpenGL -lpthread)

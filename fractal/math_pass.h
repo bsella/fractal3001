@@ -1,12 +1,12 @@
-﻿#ifndef FRACTALRENDERPASS_H
-#define FRACTALRENDERPASS_H
+﻿#ifndef FRACTALMATHPASS_H
+#define FRACTALMATHPASS_H
 
-#include "framebuffer_pass.h"
+#include "../fullscreen_pass.h"
 
-class FractalPass : public FramebufferPass
+class FractalMathPass : public FullscreenPass
 {
 public:
-	FractalPass();
+	FractalMathPass();
 
 	void render()const override;
 
@@ -20,4 +20,4 @@ private:
 	GLint m_y_location;
 };
 
-#endif // FRACTALRENDERPASS_H
+#endif // FRACTALMATHPASS_H

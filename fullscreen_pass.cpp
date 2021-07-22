@@ -1,5 +1,4 @@
-﻿#include "framebuffer_pass.h"
-#include "framebuffer.h"
+﻿#include "fullscreen_pass.h"
 
 const GLfloat quad[]=
 {
@@ -19,13 +18,13 @@ const char vertex_shader_code[]=
 		texCoord = (pos+vec2(1.0))*0.5;\n\
 	}";
 
-unsigned int FramebufferPass::count = 0;
-std::unique_ptr<Shader> FramebufferPass::singleton_vertex_shader;
+unsigned int FullscreenPass::count = 0;
+std::unique_ptr<Shader> FullscreenPass::singleton_vertex_shader;
 
-GLuint FramebufferPass::vao;
-GLuint FramebufferPass::vbo;
+GLuint FullscreenPass::vao;
+GLuint FullscreenPass::vbo;
 
-FramebufferPass::FramebufferPass() : RenderPass()
+FullscreenPass::FullscreenPass() : RenderPass()
 {
 	if(count == 0)
 	{
@@ -47,7 +46,7 @@ FramebufferPass::FramebufferPass() : RenderPass()
 	count++;
 }
 
-FramebufferPass::~FramebufferPass()
+FullscreenPass::~FullscreenPass()
 {
 	count--;
 	glDetachShader(m_program_id, singleton_vertex_shader->id());
@@ -62,12 +61,8 @@ FramebufferPass::~FramebufferPass()
 	}
 }
 
-void FramebufferPass::render()const
+void FullscreenPass::render()const
 {
 	glBindVertexArray(vao);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-}
-
-void FramebufferPass::draw_on(Framebuffer& fb) const
-{
 }

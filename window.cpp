@@ -10,9 +10,8 @@ Window::Window(const char* title, int width, int height)
 	m_width = width;
 	m_height = height;
 	m_valid = false;
-	//m_updating= false;
 	m_alive = true;
-	m_updating_thread = std::thread(&Window::thread_worker, this);
+	m_graphics_thread = std::thread(&Window::thread_worker, this);
 }
 
 void Window::thread_worker(){
@@ -27,7 +26,6 @@ void Window::thread_worker(){
 	init();
 
 	while(m_alive){
-
 		std::unique_lock<decltype(m_validation_mutex)> lock(m_validation_mutex);
 		m_cv.wait(lock, [this]{return !m_valid;});
 
@@ -44,10 +42,13 @@ void Window::thread_worker(){
 
 Window::~Window()
 {
-	m_alive = false;
-	m_valid = false;
+	{
+		std::lock_guard<decltype(m_validation_mutex)> lock(m_validation_mutex);
+		m_alive = false;
+		m_valid = false;
+	}
 	m_cv.notify_one();
-	m_updating_thread.join();
+	m_graphics_thread.join();
 	SDL_DestroyWindow(m_window);
 }
 
@@ -80,7 +81,11 @@ void Window::validate(){
 	m_cv.notify_one();
 }
 void Window::invalidate(){
-	m_valid = false;
+	{
+		//std::lock_guard<decltype(m_validation_mutex)> lock(m_validation_mutex);
+		m_valid = false;
+	}
+	m_cv.notify_one();
 }
 void Window::init(){}
 void Window::redraw()const{}
