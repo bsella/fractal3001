@@ -42,9 +42,8 @@ void MainWindow::redraw()const
 	glBindFramebuffer(GL_FRAMEBUFFER, m_gbuffer->id());
 	m_fractal_math_pass->use();
 	m_fractal_math_pass->render();
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_gbuffer->id());
-	//
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 	m_fractal_color_pass->use();
 	m_gbuffer->bind_textures();
 	m_fractal_color_pass->render();
@@ -53,6 +52,6 @@ void MainWindow::redraw()const
 void MainWindow::init(){
 	m_fractal_math_pass = std::make_unique<FractalMathPass>();
 	m_fractal_color_pass = std::make_unique<FractalColorPass>();
-	m_gbuffer = std::make_unique<GBuffer>();
+	m_gbuffer = std::make_unique<GBuffer>(640,640);
 	//m_framebuffer = std::make_unique<Framebuffer>(640,640);
 }

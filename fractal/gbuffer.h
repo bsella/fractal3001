@@ -6,7 +6,7 @@
 class GBuffer
 {
 public:
-	GBuffer();
+	GBuffer(int w, int h);
 	~GBuffer();
 
 	inline GLuint id()const{return m_id;}
@@ -15,8 +15,9 @@ public:
 
 private:
 	GLuint m_id;
-	GLuint m_z_texture;
-	GLuint m_i_texture;
+	GLuint m_z0_texture;
+	GLuint m_zn_texture;
+	GLuint m_n_texture;
 };
 
 #endif // GBUFFER_H

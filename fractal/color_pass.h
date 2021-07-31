@@ -11,8 +11,9 @@ public:
 	void render()const override;
 
 private:
-	GLint m_last_z;
-	GLint m_iterations;
+	GLint m_z0;
+	GLint m_zn;
+	GLint m_n;
 };
 
 #endif // FRACTALCOLORPASS_H

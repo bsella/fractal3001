@@ -3,60 +3,49 @@
 
 const char fragment_shader_code[]=
 "#version 330\n\
-uniform sampler2D last_z;\n\
-uniform usampler2D iteration_count;\n\
+uniform sampler2D z0;\n\
+uniform sampler2D zn;\n\
+uniform usampler2D n;\n\
 out vec4 fragColor;\n\
 in vec2 texCoord;\n\
 const float bailout = 300;\n\
 \n\
-struct complex{\n\
-	float a;\n\
-	float b;\n\
-};\n\
-\n\
-complex add(complex c1, complex c2){\n\
-	complex ret;\n\
-	ret.a = c1.a + c2.a;\n\
-	ret.b = c1.b + c2.b;\n\
-	return ret;\n\
+vec2 add(vec2 c1, vec2 c2){\n\
+	return vec2(c1.x + c2.x, c1.y + c2.y);\n\
 }\n\
 \n\
-complex mul(complex c1, complex c2){\n\
-	complex ret;\n\
-	ret.a = c1.a*c2.a - c1.b*c2.b;\n\
-	ret.b = c1.a*c2.b + c1.b*c2.a;\n\
-	return ret;\n\
+vec2 mul(vec2 c1, vec2 c2){\n\
+	return vec2(c1.x*c2.x - c1.y*c2.y, c1.x*c2.y + c1.y*c2.x);\n\
 }\n\
 \n\
-float mag2(complex c){\n\
-	return c.a*c.a + c.b*c.b;\n\
+float mag2(vec2 c){\n\
+	return c.x*c.x + c.y*c.y;\n\
 }\n\
 \n\
-float mag(complex c){\n\
+float mag(vec2 c){\n\
 	return sqrt(mag2(c));\n\
 }\n\
 \n\
-float mag_norm(complex c){\n\
+float mag_norm(vec2 c){\n\
 	return log(mag2(c)/bailout)/log(bailout);\n\
 }\n\
 \n\
-float arg(complex c){\n\
-	return 2 * atan(c.b / (c.a + sqrt(mag2(c))));\n\
+float arg(vec2 c){\n\
+	return 2 * atan(c.y / (c.x + sqrt(mag2(c))));\n\
 }\n\
 \n\
-float arg_norm(complex c){\n\
+float arg_norm(vec2 c){\n\
 	return arg(c)/6.282 + 0.5;\n\
 }\n\
 \n\
 void main(){\n\
-	complex z;\n\
-	z.a = texture(last_z, texCoord).x;\n\
-	z.b = texture(last_z, texCoord).y;\n\
-	uint i = texture(iteration_count, texCoord).r;\n\
+	vec2 z0= texture(z0, texCoord).rg;\n\
+	vec2 z= texture(zn, texCoord).rg;\n\
+	uint i = texture(n, texCoord).r;\n\
 	if(i<200u){\n\
 		fragColor = vec4(arg_norm(z), mag_norm(z), float(i)/20.0,1);\n\
 	}else{\n\
-		fragColor = vec4(z.a, z.b, 0,1);\n\
+		fragColor = vec4(z, arg_norm(z),1);\n\
 	}\n\
 }\n";
 
@@ -67,14 +56,16 @@ FractalColorPass::FractalColorPass() : FullscreenPass()
 		glAttachShader(id(), fragment_shader.id());
 		glLinkProgram(id());
 
-		m_last_z     = glGetUniformLocation(id(), "last_z");
-		m_iterations = glGetUniformLocation(id(), "iteration_count");
+		m_z0 = glGetUniformLocation(id(), "z0");
+		m_zn = glGetUniformLocation(id(), "zn");
+		m_n  = glGetUniformLocation(id(), "n");
 	}
 }
 
 void FractalColorPass::render()const
 {
-	glUniform1i(m_last_z, 0);
-	glUniform1i(m_iterations, 1);
+	glUniform1i(m_z0, 0);
+	glUniform1i(m_zn, 1);
+	glUniform1i(m_n, 2);
 	FullscreenPass::render();
 }

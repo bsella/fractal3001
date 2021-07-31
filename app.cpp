@@ -32,10 +32,7 @@ int App::run(){
 				case SDL_QUIT: return 0;
 				case SDL_WINDOWEVENT:
 					if(event.window.event == SDL_WINDOWEVENT_RESIZED){
-						unsigned int w, h;
-						w = event.window.data1;
-						h = event.window.data2;
-						//redraw = true;
+						//resize
 					}
 					break;
 				case SDL_MOUSEBUTTONDOWN:
@@ -53,10 +50,6 @@ int App::run(){
 					break;
 				default: break;
 			}
-			//if (redraw){
-			//	//SDL_GL_SwapWindow(window);
-			//	redraw = false;
-			//}
 			m_main_window->validate();
 		}
 	}
